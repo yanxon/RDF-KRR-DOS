@@ -1,7 +1,11 @@
 """
 This code mines density of states (DOS) data from AFLOW database.
 AFLOW has DOS info stored in a .xz zipfile.
-
+Here is the overall idea:
+    1. Mine data from AFLOW in .xz zipfile
+    2. Convert the .xz zipfile into .txt
+    3. read DOS information from .txt
+    4. append as Y (array) and save it as a textfile.
 """
 
 # Import libraries
@@ -19,8 +23,7 @@ def save_xz(filename, URL):
     Args:
         URL: provide a URL of the database to look for the zipfile.
 
-        filename: provide the name of the file.
-                  filename should end with .xz
+        filename: provide the name of the file; filename should end with '.xz'.
     """
     URL(filename)
     zipfile = lzma.LZMAFile(filename).read()
@@ -32,7 +35,7 @@ def get_DOS_fermi(filename):
     This function takes DOS file and return the intensity at the fermi level.
     
     Args:
-        filename: provide the DOS file
+        filename: provide the DOS file; filename should end with '.txt'.
         
     Return:
         DOS at fermi level
