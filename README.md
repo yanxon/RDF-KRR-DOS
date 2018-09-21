@@ -8,4 +8,4 @@ Radial distribution function (RDF)
 Prediction:
 DOS at Fermi level
 
-We wrote a RDF code and test the validity using 
+We made a RDF code and test the validity using several XCl (X = Li, Na, K) compounds. Please check out 
