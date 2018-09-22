@@ -62,7 +62,7 @@ def get_DOS_fermi(filename):
 # metal and no more than 3 different elements.
 results = search(batch_size = 100
                 ).filter(K.Egap_type == 'metal'
-                ).filter(K.nspecies < 4)
+                ).filter(K.nspecies < 7)
 
 n = len(results) # number of avaiable data points
 
@@ -70,16 +70,19 @@ X = [] # RDF of materials
 Y = [] # Density of states at fermi level
 
 for i, result in enumerate(results[2:5]):
-    URL = result.files['DOSCAR.static.xz']
-    save_xz(result.compound+'.xz', URL)
+    if result.catalog == 'ICSD\n':
+        URL = result.files['DOSCAR.static.xz']
+        save_xz(result.compound+'.xz', URL)
     
-    Y.append(get_DOS_fermi(result.compound+'.txt'))
+        Y.append(get_DOS_fermi(result.compound+'.txt'))
 
-    # Construct RDF from POSCAR which obtained from AFLOW
-    crystal = Structure.from_str(result.files['CONTCAR.relax.vasp'](), fmt='poscar')
-    X.append(RDF(crystal).RDF[1,:])
+        # Construct RDF from POSCAR which obtained from AFLOW
+        crystal = Structure.from_str(result.files['CONTCAR.relax.vasp'](), fmt='poscar')
+        X.append(RDF(crystal).RDF[1,:])
     
-    print('progress: ', i, '/', n, ' materials is done')
+        print('progress: ', i, '/', n, ' materials is saved')
+    else:
+        print('progress: ', i, '/', n, ' materials is rejected')
 
 # Save RDF and DOS at fermi for Machine Learning
 np.savetxt('X_test.txt', X)
