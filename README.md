@@ -14,6 +14,7 @@ DOS at Fermi level
    https://github.com/yanxon/RDF/blob/master/XCl_test.ipynb
 
 2.  We develop 3 data-mining code to extract data from Aflow and Materials Project (MP) databases:
+
    a. https://github.com/yanxon/RDF/blob/master/get_RDF_DOS_from%20AFLOW.py (RDF ---> DOS, Aflow)
    b. https://github.com/yanxon/RDF/blob/master/get_RDF_Egap_from_AFLOW.py (RDF ---> Bandgap)
    c. https://github.com/yanxon/RDF/blob/master/MP_RDF_DOS.py (RDF ---> DOS, MP)
