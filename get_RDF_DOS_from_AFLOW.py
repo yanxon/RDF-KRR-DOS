@@ -59,7 +59,7 @@ def get_DOS_fermi(filename):
     return combine[1,ele_at_fermi]
 
 # Get materials from AFLOW database based on the given criteria: 
-# metal and no more than 3 different elements.
+# metal and no more than 6 different elements.
 results = search(batch_size = 100
                 ).filter(K.Egap_type == 'metal'
                 ).filter(K.nspecies < 7)
@@ -69,7 +69,7 @@ n = len(results) # number of avaiable data points
 X = [] # RDF of materials
 Y = [] # Density of states at fermi level
 
-for i, result in enumerate(results[2:5]):
+for i, result in enumerate(results):
     if result.catalog == 'ICSD\n':
         URL = result.files['DOSCAR.static.xz']
         save_xz(result.compound+'.xz', URL)
