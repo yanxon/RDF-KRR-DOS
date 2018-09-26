@@ -1,6 +1,6 @@
 # RDF ---> Density of States (DOS) at Fermi level.
 
-A machine learning project to predict DOS of sp and spd systems. This project is based on this paper:
+A machine learning project to predict DOS of sp and spd systems. This project is inspired by:
 https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118
 
 Descriptor:
