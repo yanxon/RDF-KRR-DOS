@@ -14,6 +14,8 @@ import lzma
 import numpy as np
 import pandas as pd
 from RDF import *
+from pymatgen.core.composition import Composition
+from pymatgen.core.periodic_table import Element
 
 def save_xz(filename, URL):
     """
@@ -32,7 +34,7 @@ def save_xz(filename, URL):
     
 def get_DOS_fermi(filename):
     """
-    This function takes DOS file and return the intensity at the fermi level.
+    This function takes DOS file and return the intensity near the fermi level.
     
     Args:
         filename: provide the DOS file; filename should end with '.txt'.
@@ -56,34 +58,68 @@ def get_DOS_fermi(filename):
     find_ele_at_fermi = np.where(combine_abs == min(combine_abs))
     ele_at_fermi = find_ele_at_fermi[0][0]
     
-    return combine[1,ele_at_fermi]
+    return combine[1,ele_at_fermi-3:ele_at_fermi+4]
+
+def get_s_metal():
+    """
+
+    """
+    metals = []
+    for m in dir(Element)[:102]:
+        ele = Element[m]
+        if ele.is_alkali or ele.is_alkaline:
+            metals.append(m)
+    return metals
+
+def get_p_metal():
+    """
+    
+    """
+    metals = []
+    for m in dir(Element)[:102]:
+        ele = Element[m]
+        if ele.is_post_transition_metal:
+            metals.append[m]
+    return metals
+
+def get_d_metal():
+    """
+    
+    """
+    metals = []
+    for m in dir(Element)[:102]:
+        ele = Element[m]
+        if ele.is_transition_metal:
+            metals.append[m]
+    metals.append['Zr']
+    return metals
+
+sp_system = get_s_metal() + get_p_metal()
+spd_system = get_s_metal() + get_p_metal() + get_d_metal()
 
 # Get materials from AFLOW database based on the given criteria: 
-# metal and no more than 6 different elements.
+# metal and no more than 3 different elements.
 results = search(batch_size = 100
                 ).filter(K.Egap_type == 'metal'
                 ).filter(K.nspecies < 7)
 
 n = len(results) # number of avaiable data points
 
-X = [] # RDF of materials
-Y = [] # Density of states at fermi level
+X_all_metal = [] # RDF of materials
+Y_all_metal = [] # Density of states at fermi level
 
-for i, result in enumerate(results):
+for i, result in enumerate(results[2:5]):
     if result.catalog == 'ICSD\n':
         URL = result.files['DOSCAR.static.xz']
         save_xz(result.compound+'.xz', URL)
-    
-        Y.append(get_DOS_fermi(result.compound+'.txt'))
 
         # Construct RDF from POSCAR which obtained from AFLOW
         crystal = Structure.from_str(result.files['CONTCAR.relax.vasp'](), fmt='poscar')
-        X.append(RDF(crystal).RDF[1,:])
-    
+        X_all_metal.append(RDF(crystal).RDF[1,:])
+        Y_all_metal.append(get_DOS_fermi(result.compound+'.txt'))
+        
         print('progress: ', i, '/', n, ' materials is saved')
-    else:
-        print('progress: ', i, '/', n, ' materials is rejected')
 
 # Save RDF and DOS at fermi for Machine Learning
-np.savetxt('X_test.txt', X)
-np.savetxt('Y_test.txt', Y)
+np.savetxt('X_all_metal.txt', X_all_metal)
+np.savetxt('Y_all_metal.txt', X_all_metal)
