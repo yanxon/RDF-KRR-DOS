@@ -110,7 +110,7 @@ def get_d_metal():
 
 
 sp_system = get_s_metal() + get_p_metal()
-spd_system = get_s_metal() + get_p_metal() + get_d_metal()
+spd_system = get_d_metal()
 
 # Get materials from AFLOW database based on the given criteria: 
 # metal and no more than 3 different elements.
@@ -123,17 +123,20 @@ n = len(results) # number of avaiable data points
 X_all_metals = [] # RDF of materials
 Y_all_metals = [] # Density of states at fermi level
 sg_all_metals = [] # Space group of all metal
+compounds_all_metals = [] #compounds of all metal
 
 X_sp_metals = []
 Y_sp_metals = []
 sg_sp_metals = []
+compounds_sp_metals = []
+
 
 X_spd_metals = []
 Y_spd_metals = []
 sg_spd_metals = []
+compounds_spd_metals = []
 
-
-for i, result in enumerate(results[:5]):
+for i, result in enumerate(results[:7]):
     try:
         if result.catalog == 'ICSD\n':
             URL = result.files['DOSCAR.static.xz']
@@ -142,10 +145,11 @@ for i, result in enumerate(results[:5]):
             # Construct RDF with POSCAR
             crystal = Structure.from_str(result.files['CONTCAR.relax.vasp'](), fmt='poscar')
             
-            # Appending for all metals
-            X_all_metals.append(RDF(crystal).RDF[1,:])
-            Y_all_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-            sg_all_metals = result.spacegroup_relax
+#            # Appending for all metals
+#            X_all_metals.append(RDF(crystal).RDF[1,:])
+#            Y_all_metals.append(get_DOS_fermi(result.compound+'.txt', result))
+#            sg_all_metals.append(result.spacegroup_relax)
+#            compounds_all_metals.append(result.compound)
             
             # Get elements in the compound
             elements = result.species
@@ -161,22 +165,39 @@ for i, result in enumerate(results[:5]):
             if j == len(elements):
                 X_sp_metals.append(RDF(crystal).RDF[1,:])
                 Y_sp_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-                sg_sp_metals = result.spacegroup_relax
-                
-            # Appending for spd_metals
-            j = 0
-            for element in elements:
-                if element in spd_system:
-                    j += 1
-            if j == len(elements):
-                X_spd_metals.append(RDF(crystal).RDF[1,:])
-                Y_spd_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-                sg_spd_metals = result.spacegroup_relax
+                sg_sp_metals.append(result.spacegroup_relax)
+                compounds_sp_metals.append(result.compound)
+#                
+#            # Appending for spd_metals
+#            j = 0
+#            for element in elements:
+#                if element in spd_system:
+#                    j += 1
+#            if j == len(elements):
+#                X_spd_metals.append(RDF(crystal).RDF[1,:])
+#                Y_spd_metals.append(get_DOS_fermi(result.compound+'.txt', result))
+#                sg_spd_metals.append(result.spacegroup_relax)
+#                compounds_spd_metals.append(result.compound)
             
-            print('progress: ', i+1, '/', n, ' materials is saved')
+            print('progress: ', i+1, '/', n, ' materials is done')
             
     except:
         pass
 
-np.savetxt('X_all_metal.txt', X_all_metals)
-np.savetxt('Y_all_metal.txt', Y_all_metals)
+# Save as a text file for all metals
+#np.savetxt('X_all_metals.txt', X_all_metals)
+#np.savetxt('Y_all_metals.txt', Y_all_metals)
+#np.savetxt('sg_all_metals.txt', sg_all_metals)
+#np.savetxt('compounds_all_metals.txt', compounds_all_metals, delimiter=" ", fmt="%s")
+
+# Save as a text file for sp metals
+np.savetxt('X_sp_metals.txt', X_sp_metals)
+np.savetxt('Y_sp_metals.txt', Y_sp_metals)
+np.savetxt('sg_sp_metals.txt', sg_sp_metals)
+np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
+#
+## Save as a text file for spd metals
+#np.savetxt('X_spd_metals.txt', X_spd_metals)
+#np.savetxt('Y_spd_metals.txt', Y_spd_metals)
+#np.savetxt('sg_spd_metals.txt', sg_spd_metals)
+#np.savetxt('compounds_spd_metals.txt', compounds_spd_metals, delimiter=" ", fmt="%s")
