@@ -55,7 +55,7 @@ def get_DOS_fermi(filename, volume):
     Volume = volume.volume_cell
     DOS = np.genfromtxt(filename, dtype = float)
     energy = DOS[:,0] - E_Fermi
-    dos = DOS[:,1]/Volume
+    dos = DOS[:,1]/Volume                           # 1/(eV*A^3)
     combine = np.vstack((energy, dos))
     combine_abs = abs(combine[0,:])
     find_ele_at_fermi = np.where(combine_abs == min(combine_abs))
@@ -136,7 +136,7 @@ Y_spd_metals = []
 sg_spd_metals = []
 compounds_spd_metals = []
 
-for i, result in enumerate(results[:7]):
+for i, result in enumerate(results[:28317]):
     try:
         if result.catalog == 'ICSD\n':
             URL = result.files['DOSCAR.static.xz']
@@ -145,28 +145,28 @@ for i, result in enumerate(results[:7]):
             # Construct RDF with POSCAR
             crystal = Structure.from_str(result.files['CONTCAR.relax.vasp'](), fmt='poscar')
             
-#            # Appending for all metals
-#            X_all_metals.append(RDF(crystal).RDF[1,:])
-#            Y_all_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-#            sg_all_metals.append(result.spacegroup_relax)
-#            compounds_all_metals.append(result.compound)
+            # Appending for all metals
+            X_all_metals.append(RDF(crystal).RDF[1,:])
+            Y_all_metals.append(get_DOS_fermi(result.compound+'.txt', result))
+            sg_all_metals.append(result.spacegroup_relax)
+            compounds_all_metals.append(result.compound)
             
             # Get elements in the compound
-            elements = result.species
-            last_element = elements[-1]
-            last_element = last_element[:-1]
-            elements[-1] = last_element
+#            elements = result.species
+#            last_element = elements[-1]
+#            last_element = last_element[:-1]
+#            elements[-1] = last_element
             
             # Appending for sp_metals
-            j = 0
-            for element in elements:
-                if element in sp_system:
-                    j += 1
-            if j == len(elements):
-                X_sp_metals.append(RDF(crystal).RDF[1,:])
-                Y_sp_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-                sg_sp_metals.append(result.spacegroup_relax)
-                compounds_sp_metals.append(result.compound)
+#            j = 0
+#            for element in elements:
+#                if element in sp_system:
+#                    j += 1
+#            if j == len(elements):
+#                X_sp_metals.append(RDF(crystal).RDF[1,:])
+#                Y_sp_metals.append(get_DOS_fermi(result.compound+'.txt', result))
+#                sg_sp_metals.append(result.spacegroup_relax)
+#                compounds_sp_metals.append(result.compound)
 #                
 #            # Appending for spd_metals
 #            j = 0
@@ -185,17 +185,17 @@ for i, result in enumerate(results[:7]):
         pass
 
 # Save as a text file for all metals
-#np.savetxt('X_all_metals.txt', X_all_metals)
-#np.savetxt('Y_all_metals.txt', Y_all_metals)
-#np.savetxt('sg_all_metals.txt', sg_all_metals)
-#np.savetxt('compounds_all_metals.txt', compounds_all_metals, delimiter=" ", fmt="%s")
+np.savetxt('X_all_metals.txt', X_all_metals)
+np.savetxt('Y_all_metals.txt', Y_all_metals)
+np.savetxt('sg_all_metals.txt', sg_all_metals)
+np.savetxt('compounds_all_metals.txt', compounds_all_metals, delimiter=" ", fmt="%s")
 
 # Save as a text file for sp metals
-np.savetxt('X_sp_metals.txt', X_sp_metals)
-np.savetxt('Y_sp_metals.txt', Y_sp_metals)
-np.savetxt('sg_sp_metals.txt', sg_sp_metals)
-np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
-#
+#np.savetxt('X_sp_metals.txt', X_sp_metals)
+#np.savetxt('Y_sp_metals.txt', Y_sp_metals)
+#np.savetxt('sg_sp_metals.txt', sg_sp_metals)
+#np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
+
 ## Save as a text file for spd metals
 #np.savetxt('X_spd_metals.txt', X_spd_metals)
 #np.savetxt('Y_spd_metals.txt', Y_spd_metals)
