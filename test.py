@@ -3,79 +3,48 @@ import numpy as np
 from pymatgen import MPRester
 from RDF import *
 
-def frequency(a, x):
-    count = 0
-     
-    for i in a:
-        if i == x: count += 1
-    return count
-
 m = MPRester('ZkyR13aTi9z5hLbX')
 datas = m.query(criteria = {#"band_gap": 0.0,
                             'icsd_ids.0': {'$exists': True}
                             },
                properties=["pretty_formula", "material_id", "formula", "spacegroup.symbol", "icsd_ids"])
 
-X = []
-Y = []
+X_ICSD_PRB = []         # RDF
+Y_ICSD_PRB = []         # DOS
+sg_ICSD_PRB = []        # space group
+compound_ICSD_PRB = []  # compound
 mp_id = []
-os.chdir('prb_data')
 
+# Grab all the ICSD id from the PRB data
+os.chdir('prb_data')
 ICSD_IDs = []
 for file in glob.glob('*.dos'):
     ICSD_IDs.append(int(file[:-4]))
-
-#ICSD_IDs = np.reshape(ICSD_IDs, (3822,1))
-
-#for data in datas:
-#    for ID in data['icsd_ids']:
-#        if ID in ICSD_IDs:
-#            print(ID, data['icsd_ids'])
-#            mp_id.append(data['material_id'])
-
-print(len(mp_id))
-
-#for data in datas:
-#    for ID in data['icsd_ids']:
-#        if frequency(data['icsd_ids'],ID) != 1:
-#            print(ID,data['icsd_ids'],data['material_id'])
-#            
-#for ID in ICSD_IDs:
-#    if frequency(ICSD_IDs,ID) != 1:
-#        print('aha!')
         
 for ID in ICSD_IDs:
-    for data in datas:
-        if ID in data['icsd_ids']:
-            mp_id.append(data['material_id'])
-            break
+    # Look for each PRB ID in data screened in MP database
+    try:
+        for data in datas:
+            if ID in data['icsd_ids']:
+                mp_id.append(data['material_id'])
+                break
     
-    y = []
-    for line in open(str(ID)+'.dos','r'):
-        y.append(float(line))
-    Y.append(y)
-    structure = m.get_structure_by_material_id(data['material_id'])
-    struc = RDF(structure)
-    X.append(struc.RDF[1,:])
-    print(data['material_id'], ' is pass')
+        y = []
+        for line in open(str(ID)+'.dos','r'):
+            y.append(float(line))
+        
+        structure = m.get_structure_by_material_id(data['material_id'])
+        struc = RDF(structure)
+        X_ICSD_PRB.append(struc.RDF[1,:])
+        Y_ICSD_PRB.append(y)
+        sg_ICSD_PRB.append(data['spacegroup.symbol'])
+        compound_ICSD_PRB.append(data['pretty_formula'])
+        
+        print(data['material_id'], ' is stored')
+    except:
+        pass
 
-## more efficient than the for loop above:
-#for data in datas:
-#    add = False
-#    for id in data['icsd_ids']:
-#        if id in ICSD_IDs:
-#            add = True
-#            break
-#    if add:
-#        mp_id.append(data['material_id'])
-#        y = []
-#        for line in open(str(id)+'.dos','r'):
-#            y.append(float(line))
-#        Y.append(y)
-#        structure = m.get_structure_by_material_id(data['material_id'])
-#        struc = RDF(structure)
-#        X.append(struc.RDF[1,:])
-#        print(data['material_id'], ' is pass')
-
-np.savetxt('X_.txt',X)
-np.savetxt('Y_.txt',Y)
+np.savetxt('X_ICSD_PRB.txt', X_ICSD_PRB)
+np.savetxt('Y_ICSD_PRB.txt', Y_ICSD_PRB)
+np.savetxt('sg_ICSD_PRB.txt', sg_ICSD_PRB)
+np.savetxt('compound_ICSD_PRB.txt', compound_ICSD_PRB)
