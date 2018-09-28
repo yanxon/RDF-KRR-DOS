@@ -14,6 +14,7 @@ import lzma
 import numpy as np
 import pandas as pd
 from RDF import *
+import os
 from pymatgen.core.composition import Composition
 from pymatgen.core.periodic_table import Element
 
@@ -31,6 +32,7 @@ def save_xz(filename, URL):
     zipfile = lzma.LZMAFile(filename).read()
     newfilepath = filename[:-3]
     fo = open(newfilepath+'.txt', 'wb').write(zipfile)
+    os.remove(filename)
     
 def get_DOS_fermi(filename, volume):
     """
@@ -62,8 +64,6 @@ def get_DOS_fermi(filename, volume):
     ele_at_fermi = find_ele_at_fermi[0][0]
     
     return combine[1,ele_at_fermi-3:ele_at_fermi+4]
-
-#Y.append(combine[1,ele_at_fermi-3:ele_at_fermi+4])
 
 def get_s_metal():
     """
@@ -120,10 +120,10 @@ results = search(batch_size = 100
 
 n = len(results) # number of avaiable data points
 
-X_all_metals = [] # RDF of materials
-Y_all_metals = [] # Density of states at fermi level
-sg_all_metals = [] # Space group of all metal
-compounds_all_metals = [] #compounds of all metal
+#X_all_metals = [] # RDF of materials
+#Y_all_metals = [] # Density of states at fermi level
+#sg_all_metals = [] # Space group of all metal
+#compounds_all_metals = [] #compounds of all metal
 
 X_sp_metals = []
 Y_sp_metals = []
@@ -131,12 +131,12 @@ sg_sp_metals = []
 compounds_sp_metals = []
 
 
-X_spd_metals = []
-Y_spd_metals = []
-sg_spd_metals = []
-compounds_spd_metals = []
+#X_spd_metals = []
+#Y_spd_metals = []
+#sg_spd_metals = []
+#compounds_spd_metals = []
 
-for i, result in enumerate(results[:28317]):
+for i, result in enumerate(results[:5]):
     try:
         if result.catalog == 'ICSD\n':
             URL = result.files['DOSCAR.static.xz']
@@ -146,28 +146,28 @@ for i, result in enumerate(results[:28317]):
             crystal = Structure.from_str(result.files['CONTCAR.relax.vasp'](), fmt='poscar')
             
             # Appending for all metals
-            X_all_metals.append(RDF(crystal).RDF[1,:])
-            Y_all_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-            sg_all_metals.append(result.spacegroup_relax)
-            compounds_all_metals.append(result.compound)
+#            X_all_metals.append(RDF(crystal).RDF[1,:])
+#            Y_all_metals.append(get_DOS_fermi(result.compound+'.txt', result))
+#            sg_all_metals.append(result.spacegroup_relax)
+#            compounds_all_metals.append(result.compound)
             
             # Get elements in the compound
-#            elements = result.species
-#            last_element = elements[-1]
-#            last_element = last_element[:-1]
-#            elements[-1] = last_element
+            elements = result.species
+            last_element = elements[-1]
+            last_element = last_element[:-1]
+            elements[-1] = last_element
             
             # Appending for sp_metals
-#            j = 0
-#            for element in elements:
-#                if element in sp_system:
-#                    j += 1
-#            if j == len(elements):
-#                X_sp_metals.append(RDF(crystal).RDF[1,:])
-#                Y_sp_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-#                sg_sp_metals.append(result.spacegroup_relax)
-#                compounds_sp_metals.append(result.compound)
-#                
+            j = 0
+            for element in elements:
+                if element in sp_system:
+                    j += 1
+            if j == len(elements):
+                X_sp_metals.append(RDF(crystal).RDF[1,:])
+                Y_sp_metals.append(get_DOS_fermi(result.compound+'.txt', result))
+                sg_sp_metals.append(result.spacegroup_relax)
+                compounds_sp_metals.append(result.compound)
+                
 #            # Appending for spd_metals
 #            j = 0
 #            for element in elements:
@@ -185,16 +185,16 @@ for i, result in enumerate(results[:28317]):
         pass
 
 # Save as a text file for all metals
-np.savetxt('X_all_metals.txt', X_all_metals)
-np.savetxt('Y_all_metals.txt', Y_all_metals)
-np.savetxt('sg_all_metals.txt', sg_all_metals)
-np.savetxt('compounds_all_metals.txt', compounds_all_metals, delimiter=" ", fmt="%s")
+#np.savetxt('X_all_metals.txt', X_all_metals)
+#np.savetxt('Y_all_metals.txt', Y_all_metals)
+#np.savetxt('sg_all_metals.txt', sg_all_metals)
+#np.savetxt('compounds_all_metals.txt', compounds_all_metals, delimiter=" ", fmt="%s")
 
 # Save as a text file for sp metals
-#np.savetxt('X_sp_metals.txt', X_sp_metals)
-#np.savetxt('Y_sp_metals.txt', Y_sp_metals)
-#np.savetxt('sg_sp_metals.txt', sg_sp_metals)
-#np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
+np.savetxt('X_sp_metals.txt', X_sp_metals)
+np.savetxt('Y_sp_metals.txt', Y_sp_metals)
+np.savetxt('sg_sp_metals.txt', sg_sp_metals)
+np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
 
 ## Save as a text file for spd metals
 #np.savetxt('X_spd_metals.txt', X_spd_metals)
