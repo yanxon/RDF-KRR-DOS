@@ -26,7 +26,7 @@ DOS at Fermi level
    
    Result:
    
-   ![krr_0 1](https://user-images.githubusercontent.com/32254481/46254547-ee9f3980-c445-11e8-8c99-09da4e968b31.png)
+   ![krr_0 1](https://user-images.githubusercontent.com/32254481/46254622-d24fcc80-c446-11e8-8cf8-310630341efc.png)
    
    cap:  MAE = 0.0022 states/eV/A^3;
          r^2 = 0.6540
