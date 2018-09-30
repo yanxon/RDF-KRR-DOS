@@ -10,7 +10,7 @@ Prediction:
 DOS at Fermi level
 
 # 1.  Create RDF code (RDF.py)
-   We made a RDF code (RDF.py) and test the validity using several XCl (X = Li, Na, K) compounds.
+   We made a RDF code (RDF.py) and test the validity with several XCl (X = Li, Na, K) compounds.
    Please check out:
    https://github.com/yanxon/RDF/blob/master/XCl_test.ipynb
 
