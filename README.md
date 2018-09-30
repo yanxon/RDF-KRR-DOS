@@ -14,9 +14,9 @@ DOS at Fermi level
    Please check out:
    https://github.com/yanxon/RDF/blob/master/XCl_test.ipynb
 
-# 2.  Two mining code to extract data from Aflow and Materials Project (MP) databases:
+# 2.  Two mining code to extract data from Aflow and Materials Project (MP) databases.
 
          a. https://github.com/yanxon/RDF/blob/master/get_RDF_DOS_from%20AFLOW.py (RDF ---> DOS, Aflow)
          b. https://github.com/yanxon/RDF/blob/master/MP_RDF_DOS.py (RDF ---> DOS, MP)
 
-# 3.  Machine learning:
+# 3.  Machine learning: Kernel Ridge Regression.
