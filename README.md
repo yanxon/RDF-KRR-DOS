@@ -30,3 +30,10 @@ DOS at Fermi level
    
    cap:  MAE = 0.0022 states/eV/A^3;
          r^2 = 0.6540
+
+   Comparison to PRB:
+   
+   ![krr_prb_mp](https://user-images.githubusercontent.com/32254481/46270894-a98b0e00-c4fe-11e8-88d7-ac30552aecf9.png)
+   
+   cap:  MAE = 0.01258;
+         r^2 = 0.6748
