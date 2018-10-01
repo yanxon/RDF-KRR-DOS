@@ -24,14 +24,14 @@ DOS at Fermi level
    
    Using 2a script, sp metals are extracted from AFLOW. Then, the sp metals is learned in KRR_AFLOW_sp_metals.py.
    
-   Result (sp_system):
+   Result (sp system):
    
    ![krr_0 1](https://user-images.githubusercontent.com/32254481/46254622-d24fcc80-c446-11e8-8cf8-310630341efc.png)
    
    cap:  MAE = 0.0022 states/eV/A^3;
          r^2 = 0.6540
 
-   Comparison to PRB:
+   Comparison to PRB (spd system):
    
    ![krr_prb_mp](https://user-images.githubusercontent.com/32254481/46270894-a98b0e00-c4fe-11e8-88d7-ac30552aecf9.png)
    
