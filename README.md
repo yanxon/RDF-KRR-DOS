@@ -24,7 +24,7 @@ DOS at Fermi level
    
    Using 2a script, sp metals are extracted from AFLOW. Then, the sp metals is learned in KRR_AFLOW_sp_metals.py.
    
-   Result:
+   Result (sp_system):
    
    ![krr_0 1](https://user-images.githubusercontent.com/32254481/46254622-d24fcc80-c446-11e8-8cf8-310630341efc.png)
    
