@@ -9,22 +9,21 @@ Radial distribution function (RDF)
 Prediction:
 DOS at Fermi level
 
-## 1.  Create RDF code (RDF.py)
-   We made a RDF code (RDF.py) and test the validity with several XCl (X = Li, Na, K) compounds.
-   Please check out:
+## 1.    Create RDF code (RDF.py)
+   A RDF code (RDF.py) is created and tested with XCl (X = Li, Na, K) compounds.
+   Check out:
    https://github.com/yanxon/RDF/blob/master/XCl_test.ipynb
 
-## 2.  Two mining code to extract data from Aflow and Materials Project (MP) databases.
+## 2a.   Two mining code to extract data from Aflow database.
+##  b.   Machine learning: Kernel Ridge Regression.
 
-         a. https://github.com/yanxon/RDF/blob/master/get_RDF_DOS_from_AFLOW.py (RDF ---> DOS, Aflow)
-            There are 3 types of metals: all metals, sp metals, and spd metals.
-         b. https://github.com/yanxon/RDF/blob/master/MP_RDF_DOS.py (RDF ---> DOS, MP)
+   https://github.com/yanxon/RDF-DOS-KRR/blob/master/RDF_DOS_KRR.py (RDF ---> DOS, Aflow)
+   
+   This script extracts sp metals from AFLOW database (2a). The sp metals are split into train and test datasets. Finally, KRR algorithm is used to train the datasets (2b).
 
-## 3.  Machine learning: Kernel Ridge Regression.
-   
-   Using 2a script, sp metals are extracted from AFLOW. Then, the sp metals is learned in KRR_AFLOW_sp_metals.py.
-   
-   Result (sp system):
+## 3.    Result
+     
+   Result (sp metals):
    
    ![krr_0 1](https://user-images.githubusercontent.com/32254481/46254622-d24fcc80-c446-11e8-8cf8-310630341efc.png)
    
