@@ -22,7 +22,7 @@ DOS at Fermi level
 
 ## 3.    Result
      
-   Result (sp metals):
+   sp metals:
    
    ![krr_0 1](https://user-images.githubusercontent.com/32254481/46254622-d24fcc80-c446-11e8-8cf8-310630341efc.png)
    
