@@ -119,7 +119,7 @@ def get_d_metal():
 
 ####################################### Part a: Mining ###########################################
 # Get materials from AFLOW database based on the given criteria: 
-# metal and no more than 3 different elements.
+# sp metals with less than 7 different elements.
 
 sp_system = get_s_metal() + get_p_metal()
 
@@ -165,6 +165,12 @@ for i, result in enumerate(results):
     except:
         print('progress: ', i+1, '/', n, '-------- material does not fit the criteria')
         pass
+    
+# Save as a text file for sp metals
+np.savetxt('X_sp_metals.txt', X_sp_metals)
+np.savetxt('Y_sp_metals.txt', Y_sp_metals)
+np.savetxt('sg_sp_metals.txt', sg_sp_metals)
+np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
 
 ################################ Part b: Machine Learning ###################################
 
