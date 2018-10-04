@@ -11,7 +11,7 @@ DOS at Fermi level
 
 ## 1.    Create RDF code
    A RDF code (RDF.py) is created and tested with XCl (X = Li, Na, K) compounds.
-   Check out:
+   Check out the result here:
    https://github.com/yanxon/RDF/blob/master/XCl_test.ipynb
 
 ## 2.    Machine learning procedure
