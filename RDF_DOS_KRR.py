@@ -76,7 +76,7 @@ def get_DOS_fermi(filename, volume):
 
 def get_s_metal():
     """
-    obtain all metallic elements in group 1 & 2.
+    get all metallic elements in group 1 & 2.
     
     Returns:
         an array of metallic elements in group 1 & 2.
@@ -90,7 +90,7 @@ def get_s_metal():
 
 def get_p_metal():
     """
-    obtain all metallic elements in group 13 to 17.
+    get all metallic elements in group 13 to 17.
     
     Returns:
         an array of metallic elements in group 13 to 17.
@@ -104,7 +104,7 @@ def get_p_metal():
 
 def get_d_metal():
     """
-    obtain all transition-metal elements.
+    get all transition-metal elements.
     
     Returns:
         an array of transition-metal elements.
