@@ -299,7 +299,6 @@ hexa = plt.scatter(y_pred_hexagonal, Y_test_hexagonal, c='darkcyan')
 cub = plt.scatter(y_pred_cubic, Y_test_cubic, c='gray')
 
 plt.title('DOS: Actual vs Predicted -- 844 crystals')
-#plt.text(1.6,.3, '$r^2$: 0.6540')
 plt.legend((tri, mono, ortho, tetra, trig, hexa, cub),
            ('triclinic', 'monoclinic', 'orthorhombic', 'tetragonal', 'trigonal', 'hexagonal', 'cubic'),
            loc='lower right',
