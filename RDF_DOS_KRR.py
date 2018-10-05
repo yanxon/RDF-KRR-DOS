@@ -12,21 +12,30 @@ b. Machine Learning:
 """
 
 # Import libraries
+import sys
+import os
 from aflow import *
 import lzma
+import json
 import numpy as np
 import pandas as pd
 from RDF import *
-import os
-from pymatgen.core.composition import Composition
-from pymatgen.core.periodic_table import Element
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error
+from pymatgen.core.composition import Composition
+from pymatgen.core.periodic_table import Element
+from pymatgen.core import Structure
 
 # Functions
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
 def save_xz(filename, URL):
     """
     1. Save .xz zipfile downloaded from an online database.
@@ -117,6 +126,37 @@ def get_d_metal():
     metals.append('Zr')
     return metals
 
+def read_json(json_file):
+    with open(json_file, "r") as f:
+        content = json.load(f)
+    entry = []
+    E_form = []
+    for dct in content:
+        lattice = dct['lattice']
+        coords = dct['coordinates']
+        elements = dct['atom_array']
+        E_form.append(dct['form_energy_cell'])
+        entry.append(Structure(lattice, elements, coords))
+
+def material_properties(result, dos):
+    """
+    
+    """
+    atoms = []
+    for i, species in enumerate(result.species):
+        for j in range(result.composition[i]):
+            atoms.append(species)
+    mat_property = {'formula': result.compound,
+                    'lattice': result.geometry,
+                    'coordinates': result.positions_fractional,
+                    'atom_array': atoms,
+                    'form_energy_cell': result.enthalpy_formation_cell,
+                    'n_atoms': result.natoms,
+                    'volume': result.volume_cell,
+                    'space_group': result.spacegroup_relax,
+                    'dos_fermi': dos}
+    return mat_property, print(atoms)
+
 ####################################### Part a: Mining ###########################################
 # Get materials from AFLOW database based on the given criteria: 
 # sp metals with less than 7 different elements.
@@ -131,8 +171,7 @@ n = len(results) # number of avaiable data points
 
 X_sp_metals = []
 Y_sp_metals = []
-sg_sp_metals = []
-compounds_sp_metals = []
+materials_info = []
 
 for i, result in enumerate(results):
     try:
@@ -149,32 +188,35 @@ for i, result in enumerate(results):
             last_element = last_element[:-1]
             elements[-1] = last_element
             
-            # Appending for sp_metals
+            # Collecting for sp_metals compound
             j = 0
             for element in elements:
                 if element in sp_system:
                     j += 1
             if j == len(elements):
                 X_sp_metals.append(RDF(crystal).RDF[1,:])
-                Y_sp_metals.append(get_DOS_fermi(result.compound+'.txt', result))
-                sg_sp_metals.append(result.spacegroup_relax)
-                compounds_sp_metals.append(result.compound)
+                dos = get_DOS_fermi(result.compound+'.txt', result)
+                Y_sp_metals.append(dos)
+                materials_info.append(material_properties(result, dos))
                 
-            print('progress: ', i+1, '/', n, '-------- material is stored')
+                print('progress: ', i+1, '/', n, '-------- material is stored')
+            else:
+                print('progress: ', i+1, '/', n, '-------- material is rejected')
+            
+        os.remove(result.compound+'.txt')
             
     except:
         print('progress: ', i+1, '/', n, '-------- material does not fit the criteria')
+        os.remove(result.compound+'.txt')
         pass
     
 # Save as a text file for sp metals
-np.savetxt('X_sp_metals.txt', X_sp_metals)
-np.savetxt('Y_sp_metals.txt', Y_sp_metals)
-np.savetxt('sg_sp_metals.txt', sg_sp_metals)
-np.savetxt('compounds_sp_metals.txt', compounds_sp_metals, delimiter=" ", fmt="%s")
+with open('sp_metal_aflow_844.json', 'w') as f:
+    json.dump(materials_info, f, cls=NumpyEncoder, indent=1)
 
 ################################ Part b: Machine Learning ###################################
 
-N_data = len(sg_sp_metals)
+N_data = len(Y_sp_metals)
 
 # Shorter RDF
 X_sp_metals = X_sp_metals[:,10:30]
