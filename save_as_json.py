@@ -80,7 +80,7 @@ X_sp_metals = []
 Y_sp_metals = []
 materials_info = []
 
-for i, result in enumerate(results[51:55]):
+for i, result in enumerate(results[:28317]):
     try:
         if result.catalog == 'ICSD\n':
             URL = result.files['DOSCAR.static.xz']
@@ -118,8 +118,8 @@ for i, result in enumerate(results[51:55]):
         pass
 
 # Save as json for sp metals
-with open('sp_metal_aflow_844.json', 'w') as f:
+with open('Datasets/sp_metal_aflow_844.json', 'w') as f:
     json.dump(materials_info, f, cls=NumpyEncoder, indent=1)
 
-entry, E_form = read_json('sp_metal_aflow_844.json')
-print(entry, E_form)
+#entry, E_form = read_json('Datasets/sp_metal_aflow_844.json')
+#print(entry, E_form)
