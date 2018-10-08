@@ -24,7 +24,7 @@ def read_json(json_file):
         coords = dct['coordinates']
         elements = dct['atom_array']
         E_form.append(dct['form_energy_cell'])
-        #entry.append(Structure(lattice, elements, coords))
+        entry.append(Structure(lattice, elements, coords))
 
     return entry, E_form
 
