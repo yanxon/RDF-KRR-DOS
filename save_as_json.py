@@ -61,6 +61,9 @@ def get_DOS_fermi(filename, volume):
     combine = np.vstack((energy, dos))
     combine_abs = abs(combine[0,:])
                                                                                                                                                                                                                                                             1,1           Top
+                    'n_atoms': result.natoms,
+                    'volume': result.volume_cell,
+                    'space_group': result.spacegroup_relax,
                     'dos_fermi': dos}
     return mat_property
 
@@ -110,11 +113,8 @@ for i, result in enumerate(results[:28317]):
             else:
                 print('progress: ', i+1, '/', n, '-------- material is rejected')
 
-        os.remove(result.compound+'.txt')
-
     except:
         print('progress: ', i+1, '/', n, '-------- material does not fit the criteria')
-        os.remove(result.compound+'.txt')
         pass
 
 # Save as json for sp metals
