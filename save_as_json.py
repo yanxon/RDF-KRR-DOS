@@ -142,8 +142,6 @@ def material_properties(result, dos):
                     'dos_fermi': dos}
     return mat_property
 
-#materials_info.append(material_properties(results[54]))
-
 ####################################### Part a: Mining ###########################################
 # Get materials from AFLOW database based on the given criteria: 
 # sp metals with less than 7 different elements.
@@ -155,9 +153,6 @@ results = search(batch_size = 100
                 ).filter(K.nspecies < 7)
 
 n = len(results) # number of avaiable data points
-
-#d['dos'] = get_DOS_fermi(results[0].compound+'.txt', results[0])
-#d['form_energy'] = results[0].enthalpy_formation_cell
 
 X_sp_metals = []
 Y_sp_metals = []
