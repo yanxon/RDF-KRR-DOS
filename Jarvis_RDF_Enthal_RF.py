@@ -6,7 +6,6 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 from Descriptors.RDF import *
-from get_desc import *
 from pymatgen.core.structure import Structure
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
@@ -38,7 +37,7 @@ def get_features(data):
     return X, Y
 
 # Import data
-data = loadfn('jdft_3d-7-7-2018.json',cls=MontyDecoder)
+data = loadfn('Datasets/jdft_3d-7-7-2018.json',cls=MontyDecoder)
 
 # Split to train and test sets
 X, Y = get_features(data)
@@ -47,17 +46,16 @@ Y=np.array(Y).astype(np.float)
 X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size = 0.2, random_state=0)
 
 # Perform gradient boosting
-est= GradientBoostingRegressor(loss = 'huber', learning_rate = 0.01, n_estimator = 200, validation_fraction = 0.2, tol = 1e-6)
+est= GradientBoostingRegressor(loss = 'huber', learning_rate = 0.01, n_estimators = 200)
 pipe=Pipeline([("fs", VarianceThreshold()),("est", est)])
 pipe.fit(X_train,Y_train)
 
 # Test set
-
 total_mae = 0   # Total mean absolute error
 n = 0           # Number of test points
 Y_predicted = [] # for plotting purpose
 
-for i in range(5):
+for i in range(len(Y_test)):
     y_predicted = pipe.predict([X_test[i]])[0]
     mae = abs(y_predicted - Y_test[i])
     total_mae += mae
