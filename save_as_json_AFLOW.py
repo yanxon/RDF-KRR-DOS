@@ -1,10 +1,13 @@
-# construct json
-aa
+# Make a list of dicts of materials properties of ICSD materials with < 40 atoms per unit cell.
 
+import os
+import sys
 import numpy as np
 import json
 from aflow import *
-from RDF import *
+from Descriptors.RDF import *
+from pymatgen.core.composition import Composition
+from pymatgen.core.periodic_table import Element
 from pymatgen.core import Structure
 from pymatgen.core import Lattice
 
@@ -36,7 +39,11 @@ def material_properties(result):
     atoms = []
     for i, species in enumerate(result.species):
         for j in range(result.composition[i]):
-            atoms.append(species)
+            # Since AFLOW return value like ['Al', 'Si/n'], /n is needed to be gone!
+            if len(species) > 2:
+                atoms.append(species[:-2])
+            else:
+                atoms.append(species)
     lat = Lattice.from_lengths_and_angles(result.geometry[:3], result.geometry[3:])
     mat_property = {'catalog': result.catalog,
                     'formula': result.compound,
@@ -51,16 +58,12 @@ def material_properties(result):
 
 ####################################### Part a: Mining ###########################################
 # Get materials from AFLOW database based on this given criteria:
-
-results = search(batch_size = 100
-                ).filter(K.Egap_type == 'metal'
-                ).filter(K.nspecies < 7)
+results = search(catalog='icsd',batch_size = 100
+         ).filter(K.natoms < 40)
 
 n = len(results) # number of avaiable data points
-
 materials_info = []
-
-for i, result in enumerate(results[3:5]):
+for i, result in enumerate(results):
     try:
         materials_info.append(material_properties(result))
 
@@ -74,5 +77,5 @@ for i, result in enumerate(results[3:5]):
 with open('all_aflow.json', 'w') as f:
     json.dump(materials_info, f, cls=NumpyEncoder, indent=1)
 
-entry, E_form = read_json('all_aflow.json')
-print(entry, E_form)
+#entry, E_form = read_json('all_aflow.json')
+#print(entry, E_form)
