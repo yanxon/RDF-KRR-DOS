@@ -5,13 +5,14 @@
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
-from RDF import *
+from Descriptors.RDF import *
 from get_desc import *
 from pymatgen.core.structure import Structure
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor
 from sklearn.feature_selection import VarianceThreshold
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 import numpy as np
 import sys
@@ -25,7 +26,7 @@ def isfloat(value):
     except ValueError:
         return False
 
-def get_training_set(data):
+def get_features(data):
     X = []  #RDF
     Y = []  #Formation energy
     for i in data:
@@ -39,39 +40,36 @@ def get_training_set(data):
 # Import data
 data = loadfn('jdft_3d-7-7-2018.json',cls=MontyDecoder)
 
-X, Y = get_training_set(data[:20000])
-
-# Perform gradient boosting
+# Split to train and test sets
+X, Y = get_features(data)
 X=np.array(X).astype(np.float)
 Y=np.array(Y).astype(np.float)
-est= GradientBoostingRegressor()
-pipe=Pipeline([ ("fs", VarianceThreshold()),("est", est)])
-pipe.fit(X,Y)
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size = 0.2, random_state=0)
+
+# Perform gradient boosting
+est= GradientBoostingRegressor(loss = 'huber', learning_rate = 0.01, n_estimator = 200, validation_fraction = 0.2, tol = 1e-6)
+pipe=Pipeline([("fs", VarianceThreshold()),("est", est)])
+pipe.fit(X_train,Y_train)
 
 # Test set
 
 total_mae = 0   # Total mean absolute error
 n = 0           # Number of test points
 Y_predicted = [] # for plotting purpose
-Y_dft = []       # for plotting purpose
 
-for i in data[20000:]:
-    crystal = i['final_str']
-    test_x = RDF(crystal).RDF[1,:]
-    y_predicted = pipe.predict([test_x])[0]
-    y_dft = i['form_enp']
-    mae = abs(y_predicted - y_dft)
+for i in range(5):
+    y_predicted = pipe.predict([X_test[i]])[0]
+    mae = abs(y_predicted - Y_test[i])
     total_mae += mae
     n += 1
 
     Y_predicted.append(y_predicted)
-    Y_dft.append(y_dft)
 
 print(total_mae/n)
 
 # Plotting
 
-plt.plot(Y_dft, Y_predicted, 'bo')
+plt.plot(Y_test, Y_predicted, 'bo')
 plt.xlabel('Enthalpy_dft (eV/atom)')
 plt.ylabel('Enthalpy_ML (eV/atom)')
-plt.savefig('enthalpy_form.png')
+plt.savefig('Results/enthalpy_form.png')
