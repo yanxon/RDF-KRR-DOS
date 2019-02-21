@@ -19,7 +19,7 @@ import lzma
 import json
 import numpy as np
 import pandas as pd
-from RDF import *
+from Descriptors.RDF import *
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.kernel_ridge import KernelRidge
